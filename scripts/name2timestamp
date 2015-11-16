@@ -1,0 +1,37 @@
+#!/usr/bin/env python
+from __future__ import print_function
+import argparse
+from name2time import update_timestamps
+
+
+def parse_arguments():
+    parser = argparse.ArgumentParser(description='Set modified/accessed timestamp ' +
+                                                 'to all files in the directory recursively.')
+    parser.add_argument('-y', '--yes', action='store_true', default=False,
+                        help='Skip prompts, assume "YES".')
+    parser.add_argument('--fmt', default='', action='store',
+                        help='Format to feed to strptime function. (default: %Y%m%d_%H%M%S)')
+    parser.add_argument('dir', help='Directory to start running from.')
+    return parser.parse_args()
+
+
+def run(start_dir, fmt):
+    print('Running in "%s", please wait...' % start_dir)
+    update_timestamps(start_dir, fmt)
+    print('All done!')
+
+
+def main():
+    args = parse_arguments()
+    if not args.yes:
+        proceed = raw_input('Are you sure you want to run recursively from "%s"? (y/N) ' % args.dir)
+        if proceed.upper() in ['Y', 'YES']:
+            run(args.dir, args.fmt)
+        else:
+            print('Quitting.')
+    else:
+        run(args.dir, args.fmt)
+
+
+if __name__ == '__main__':
+    main()
